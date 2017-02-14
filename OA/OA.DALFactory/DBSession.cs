@@ -3,15 +3,22 @@ using OA.IDAL;
 using OA.Model;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OA.DALFactory
 {
-    public class DBSession
+    public class DBSession:IDBSession
     {
-        OAEntities Db = new OAEntities();
+        public DbContext Db
+        {
+            get
+            {
+                return DBContextFactory.CreateContext();
+            }
+        }
         private IUserInfoDal _UserInfoDal;
         public IUserInfoDal UserInfoDal
         {
@@ -19,7 +26,7 @@ namespace OA.DALFactory
             {
                 if(_UserInfoDal==null)
                 {
-                    _UserInfoDal = new UserInfoDAL();
+                    _UserInfoDal = AbstractFactory.CreateUserInfoDal();
                 }
                 return _UserInfoDal;
             }

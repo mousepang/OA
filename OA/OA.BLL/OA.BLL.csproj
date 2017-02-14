@@ -40,8 +40,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="BaseService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserInfoService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OA.DALFactory\OA.DALFactory.csproj">
+      <Project>{ec6f91af-abf3-44b3-a582-a24881a8d942}</Project>
+      <Name>OA.DALFactory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OA.DAL\OA.DAL.csproj">
+      <Project>{382167f9-8a4c-4f40-8098-a6ba883a5ef9}</Project>
+      <Name>OA.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OA.IBLL\OA.IBLL.csproj">
+      <Project>{56811f30-8aee-4e91-9bb2-b4dd14d81895}</Project>
+      <Name>OA.IBLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OA.IDAL\OA.IDAL.csproj">
+      <Project>{ed94f863-61ef-43d9-b0f2-31ed0edc6ded}</Project>
+      <Name>OA.IDAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OA.Model\OA.Model.csproj">
+      <Project>{d9e9995d-d5a6-4c93-ba73-f68cef3675d9}</Project>
+      <Name>OA.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

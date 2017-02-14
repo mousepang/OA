@@ -1,6 +1,7 @@
 ﻿using OA.Model;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -10,7 +11,13 @@ namespace OA.DAL
 {
    public class BaseDAL<T>where T:class,new()
     {
-        OAEntities Db = new OAEntities();
+        public DbContext Db
+        {
+            get
+            {
+                return DBContextFactory.CreateContext();
+            }
+        }
         /// <summary>
         /// 增加
         /// </summary>
@@ -34,6 +41,7 @@ namespace OA.DAL
             return true;
         }
 
+        
 
         /// <summary>
         /// 修改
