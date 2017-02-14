@@ -37,7 +37,7 @@ namespace OA.DAL
         /// <returns></returns>
         public bool DeleteEntity(T entity)
         {
-            Db.Entry<T>(entity).State = System.Data.EntityState.Deleted;
+            Db.Entry<T>(entity).State = System.Data.Entity.EntityState.Deleted;
             return true;
         }
 
@@ -50,7 +50,7 @@ namespace OA.DAL
         /// <returns></returns>
         public bool EditEntity(T entity)
         {
-            Db.Entry<T>(entity).State = System.Data.EntityState.Modified;
+            Db.Entry<T>(entity).State = System.Data.Entity.EntityState.Modified;
             return true;
         }
 

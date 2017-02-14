@@ -15,7 +15,7 @@ namespace OA.DALFactory
         private static readonly string NameSpace = ConfigurationManager.AppSettings["NameSpace"];
         public static IUserInfoDal CreateUserInfoDal()
         {
-            string fullClassName = NameSpace + ".UserInfoDal";
+            string fullClassName = NameSpace + ".UserInfoDAL";
             return CreateInstance(fullClassName) as IUserInfoDal;
         }
 

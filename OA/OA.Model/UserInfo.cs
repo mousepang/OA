@@ -18,5 +18,7 @@ namespace OA.Model
         public string UserName { get; set; }
         public string Password { get; set; }
         public int dutyid { get; set; }
+        public string Remark { get; set; }
+        public Nullable<System.DateTime> SubTime { get; set; }
     }
 }
