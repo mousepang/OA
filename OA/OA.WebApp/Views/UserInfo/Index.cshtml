@@ -16,11 +16,11 @@
     <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
     <script src="~/Scripts/datapattern.js"></script>
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script type="text/javascript">
         $(function () {
-            $("#addDiv").css("display","none");
+            $("#addDiv").css("display", "none");
+            $("#editDiv").css("display", "none");       
             loadData();
         });
         function loadData() {
@@ -80,6 +80,52 @@
             });
         }
 
+        //修改数据
+        function showEditInfo() {
+            var rows = $('#tt').datagrid('getSelections');
+            if (rows.length != 1)
+            {
+                $.messager.alert('提醒', '请选择要修改的记录！', 'error');
+                return;
+            }
+            //将要修改的数据查询出来，显示到文本框中。
+            var id = rows[0].ID;
+            $.post("/UserInfo/ShowEditInfo", { "id": id }, function (data) {
+                $("#txtUserName").val(data.UserName);
+                $("#txtPassword").val(data.Password);
+                $("#txtRemark").val(data.Remark);
+                $("#txtSubTime").val(ChangeDateFormat(data.SubTime));
+                $("#txtdutyid").val(data.dutyid);
+                $("#txtId").val(data.id);
+            });
+            $("#editDiv").css("display", "block");
+            $("#editDiv").dialog({
+                title: '修改用户数据',
+                width: 300,
+                height: 200,
+                collapsible: true,
+                minimizable: true,
+                maximizable: true,
+                resizable: true,
+                closed: false,
+                cache: false,
+                modal: true,
+                buttons: [{
+                    text: 'Ok',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        validateInfo($('#editForm'));
+                        $('#editForm').submit();
+                    }
+                }, {
+                    text: 'Cancel',
+                    handler: function () {
+                        $("#editDiv").dialog('close');
+                    }
+                }]
+            });
+        }
+
         //添加数据
         function addInfo() {
             $("#addDiv").css("display", "block");
@@ -97,7 +143,8 @@
                 buttons:[{
                     text:'Ok',
                     iconCls:'icon-ok',
-                    handler:function(){
+                    handler: function () {
+                        validateInfo($('#addForm'));
                         $('#addForm').submit();
                     }
                 },{
@@ -153,11 +200,52 @@
                 }             
             });
         }
+
+        //表单校验
+        function validateInfo(control) {
+            control.validate({//表示对哪个form表单进行校验，获取form标签的id属性的值
+                rules: {//表示验证规则
+                    UserName: "required",//表示对哪个表单元素进行校验，要写具体的表单元素的name属性的值
+                    Remark: {
+                        required: true
+                    },
+                    Password: {
+                        required: true,
+                        minlength: 5
+                    }
+                },
+                messages: {
+                    UserName: "请输入用户名",
+                    Remark: {
+                        required: "请输入备注"
+                    },
+                    Password: {
+                        required: "请输入密码",
+                        minlength: jQuery.format("密码不能小于{0}个字 符")
+                    }
+                }
+            });
+        }
+        function afterEdit(data) {
+            if (data == "ok") {
+                $('#editDiv').dialog('close');
+                $('#tt').datagrid('reload');//加载表格不会跳到第一页。
+            } else {
+                $.messager.alert("提示", "修改的数据失败", "error");
+            }
+        }
+        //将序列化成json格式后日期(毫秒数)转成日期格式
+        function ChangeDateFormat(cellval) {
+            var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            return date.getFullYear() + "-" + month + "-" + currentDate;
+        }
         </script>
 </head>
 <body>
     <div>
-        <table id="tt" style="width: 700px;" title="标题，可以使用代码进行初始化，也可以使用这种属性的方式" iconcls="icon-edit"></table> 
+        <table id="tt" style="width: 700px;" title="用户数据展示" iconcls="icon-edit"></table> 
     </div>
     <div id="addDiv">
         @using (Ajax.BeginForm("AddUserInfo", "UserInfo", new { }, new AjaxOptions() { HttpMethod = "post", OnSuccess = "afterAdd" }, new { id = "addForm" }))
@@ -169,6 +257,19 @@
             </table>
         }       
     </div>
+    <div id="editDiv">
+        @using (Ajax.BeginForm("EditUserInfo", "UserInfo", new { }, new AjaxOptions() { HttpMethod = "post", OnSuccess = "afterEdit" }, new { id = "editForm" }))
+        {
+            <input type="hidden" name="ID" id="txtId" />
+            <input type="hidden" name="SubTime" id="txtSubTime" />
+            <input type="hidden" name="dutyid" id="txtdutyid" />
 
+            <table>
+                <tr><td>用户名</td><td><input type="text" name="UserName" id="txtUserName"/></td></tr>
+                <tr><td>密码</td><td><input type="text" name="Password" id="txtPassword"/></td></tr>
+                <tr><td>备注</td><td><input type="text" name="Remark" id="txtRemark"/></td></tr>
+            </table>
+        }
+    </div>
 </body>
 </html>

@@ -65,5 +65,30 @@ namespace OA.WebApp.Controllers
             return Content("ok");
         }
         #endregion
+
+        #region 展示修改数据
+        public ActionResult ShowEditInfo()
+        {
+            int uID = 0;
+            int.TryParse(Request["id"], out uID);
+            var userInfo =  UserInfoService.LoadEntities(u => u.id==uID).FirstOrDefault();
+            return Json(userInfo, JsonRequestBehavior.AllowGet);        
+        }
+        #endregion
+
+        #region 修改用户数据
+        public ActionResult EditUserInfo(UserInfo userInfo)
+        {
+            if(UserInfoService.EditEntity(userInfo))
+            {
+                return Content("ok");
+            }
+            else
+            {
+                return Content("no");
+            }
+            
+        }
+        #endregion
     }
 }
