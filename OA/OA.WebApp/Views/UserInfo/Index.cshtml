@@ -15,11 +15,14 @@
     <script src="~/Scripts/jquery.easyui.min.js"></script>
     <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
     <script src="~/Scripts/datapattern.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script src="~/Scripts/jquery.validate.min.js"></script>
     <script type="text/javascript">
-        $(function () {          
+        $(function () {
+            $("#addDiv").css("display","none");
             loadData();
         });
-
         function loadData() {
             $('#tt').datagrid({
                 url: '/UserInfo/GetUserInfoList',
@@ -76,11 +79,96 @@
                 }],
             });
         }
+
+        //添加数据
+        function addInfo() {
+            $("#addDiv").css("display", "block");
+            $("#addDiv").dialog({
+                title: '添加用户数据',
+                width: 300,
+                height: 200,
+                collapsible: true,
+                minimizable: true,
+                maximizable: true,
+                resizable:true,
+                closed: false,
+                cache: false,
+                modal: true,
+                buttons:[{
+                    text:'Ok',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        $('#addForm').submit();
+                    }
+                },{
+                    text:'Cancel',
+                    handler: function () {
+                        $("#addDiv").dialog('close');
+                    }
+                }]
+                });
+        }
+
+        //添加完成后
+        function afterAdd(data)
+        {
+            if (data == "ok") {
+                $('#addDiv').dialog('close');
+                $('#tt').datagrid('reload');//加载表格不会跳到第一页。
+                $("#addForm input").val("");
+            }
+        }
+      
+        //删除数据
+        function deleteInfo() {
+            var rows = $('#tt').datagrid('getSelections');
+            if(!rows||rows.length == 0)
+            {
+                $.messager.alert('提醒', '请选择要删除的记录！', 'error');
+                return;
+            }
+            $.messager.confirm('确认', '你确定要删除吗?', function (r) {
+                //遍历选中的id
+                if (r) {
+                    var rowsLength = rows.length;
+                    var strId = "";
+                    for(var i=0;i<rowsLength;i++)
+                    {
+                        strId = strId + rows[i].id + ",";
+                    }
+                    //去掉最后一位的逗号
+                    strId = strId.substr(0, strId.length - 1);
+                    //提交到后台
+                    $.post("/UserInfo/DeleteUserInfo", { "strId": strId }, function (data) {
+                        if(data=="ok")
+                        {
+                            $('#tt').datagrid('reload');//重新加载表格
+                            $('#tt').datagrid('clearSelections');//清除上次操作的历史记录
+                        }
+                        else
+                        {
+                            $.messager.alert('提醒', '删除失败');
+                        }
+                    });
+                }             
+            });
+        }
         </script>
 </head>
 <body>
     <div>
         <table id="tt" style="width: 700px;" title="标题，可以使用代码进行初始化，也可以使用这种属性的方式" iconcls="icon-edit"></table> 
     </div>
+    <div id="addDiv">
+        @using (Ajax.BeginForm("AddUserInfo", "UserInfo", new { }, new AjaxOptions() { HttpMethod = "post", OnSuccess = "afterAdd" }, new { id = "addForm" }))
+        {
+            <table>
+                <tr><td>用户名</td><td><input type="text" name="UserName" /></td></tr>
+                <tr><td>密码</td><td><input type="text" name="Password" /></td></tr>
+                <tr><td>备注</td><td><input type="text" name="Remark" /></td></tr>
+            </table>
+        }       
+    </div>
+
 </body>
 </html>

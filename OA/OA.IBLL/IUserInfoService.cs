@@ -9,5 +9,6 @@ namespace OA.IBLL
 {
     public interface IUserInfoService:IBaseServicee<UserInfo>
     {
+        bool DeleteEntities(List<int>list);
     }
 }

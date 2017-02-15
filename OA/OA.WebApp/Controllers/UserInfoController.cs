@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OA.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -25,13 +26,43 @@ namespace OA.WebApp.Controllers
             var temp = from u in userInfoList
                        select new
                        {
-                           id = u.id,
+                           ID = u.id,
                            UName = u.UserName,
                            UPwd = u.Password,
                            Remark = u.Remark,
                            SubTime = u.SubTime
                        };
             return Json(new { rows = temp, total = totalCount });
+        }
+        #endregion
+
+        #region 删除用户数据
+        public ActionResult DeleteUserInfo(string strId)
+        {
+            string[] strIds = strId.Split(',');
+            List<int> list = new List<int>();
+            foreach(string id in strIds)
+            {
+                list.Add(Convert.ToInt32(id));
+            }
+           if(UserInfoService.DeleteEntities(list))
+            {
+                return Content("ok");
+            }
+           else
+            {
+                return Content("no");
+            }
+        }
+        #endregion
+
+        #region 添加用户数据
+        public ActionResult AddUserInfo(UserInfo userinfo)
+        {
+            userinfo.dutyid = 0;
+            userinfo.SubTime = DateTime.Now;
+            UserInfoService.AddEntity(userinfo);
+            return Content("ok");
         }
         #endregion
     }
