@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using OA.WebApp.Models;
 
 namespace OA.WebApp
 {
@@ -7,7 +8,7 @@ namespace OA.WebApp
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute());
+            filters.Add(new MyExceptionAttribute());
         }
     }
 }

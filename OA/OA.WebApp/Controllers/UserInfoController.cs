@@ -1,6 +1,7 @@
 ﻿using OA.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -8,9 +9,9 @@ using System.Web.Mvc;
 namespace OA.WebApp.Controllers
 {
    
-    public class UserInfoController : Controller
+    public class UserInfoController : BaseController
     {
-        IBLL.IUserInfoService UserInfoService = new BLL.UserInfoService();
+        private IBLL.IUserInfoService UserInfoService { get; set; }
         // GET: UserInfo
         public ActionResult Index()
         {
@@ -22,7 +23,7 @@ namespace OA.WebApp.Controllers
             int pageIndex = Request["page"] != null ? int.Parse(Request["page"]) : 1;
             int pageSize = Request["rows"] != null ? int.Parse(Request["rows"]) : 5;
             int totalCount = 0;
-            var userInfoList =  UserInfoService.LoadPageEntities<int>(pageIndex,pageSize,out totalCount,c=>true,c=>c.id,true);
+            var userInfoList = UserInfoService.LoadPageEntities<int>(pageIndex, pageSize, out totalCount, c => true, c => c.id, true);
             var temp = from u in userInfoList
                        select new
                        {
@@ -32,7 +33,9 @@ namespace OA.WebApp.Controllers
                            Remark = u.Remark,
                            SubTime = u.SubTime
                        };
+            Debug.WriteLine(temp);
             return Json(new { rows = temp, total = totalCount });
+
         }
         #endregion
 

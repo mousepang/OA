@@ -8,9 +8,10 @@ namespace OA.WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        public string message { get; set; }
         public ActionResult Index()
         {
-            return View();
+            return Content(message);
         }
 
         public ActionResult About()
